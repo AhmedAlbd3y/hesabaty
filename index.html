@@ -36,7 +36,6 @@ textarea#draft{line-height:32px;padding-top:6px;background:repeating-linear-grad
 <section class="glass chat">
  <div class="messages" id="messages"><div class="msg bot">اكتب ملاحظاتك وحساباتك بطريقتك العادية. الكلام بيتحفظ تلقائيًا حتى لو قفلت التطبيق بالغلط.<br><br>مثال: معايا 13000 وعليا قسط هواتف 3343 وقسط شاشة 2058 ووفر 4000 للشخص.</div></div>
  <div class="compose"><textarea id="draft" placeholder="اكتب هنا... سيتم حفظ النص تلقائيًا"></textarea><div class="compose-actions"><span class="autosave" id="draftStatus">الحفظ التلقائي جاهز</span><button class="btn" id="saveEntry">حفظ في الدفتر</button></div></div>
- <div class="quick"><button class="chip" data-text="معايا 13000 جنيه">فلوس متاحة</button><button class="chip" data-text="لسه هقبض جمعية 4000 جنيه">دخل منتظر</button><button class="chip" data-text="عليا قسط هواتف 3343 جنيه">قسط</button><button class="chip" data-text="وفر 2000 جنيه للجمعية">توفير</button></div>
 </section><h2 class="section">العمليات</h2><div id="items" class="list"></div></section>
 <section id="recordsPane" class="hidden"><h2 class="section">دفترك — مرتب بالشهر واليوم</h2><div id="records" class="list"></div></section>
 <section id="allPane" class="hidden"><h2 class="section">كل العمليات والنسخ الاحتياطي</h2><div id="allRecords" class="list"></div>
@@ -97,7 +96,6 @@ const keepDraft=()=>{if($('draft').value)localStorage.setItem(DRAFT,$('draft').v
 $('todayBtn').onclick=()=>{const n=new Date();fillDate($('year'),$('month'),$('day'),{y:n.getFullYear(),m:n.getMonth()+1,d:n.getDate()});setChosen()};
 $('draft').addEventListener('input',()=>{localStorage.setItem(DRAFT,$('draft').value);$('draftStatus').textContent='تم حفظ المسودة تلقائيًا'});
 $('saveEntry').onclick=()=>{const text=$('draft').value.trim();if(!text){alert('اكتب الحساب الأول');return}const found=parse(text,dkey(chosen.y,chosen.m,chosen.d));if(!found.length){alert('مقدرتش ألاقي مبلغ. اكتب كلمة زي: معايا / عليا / قسط / وفر / هقبض مع الرقم.');return}items.push(...found);persist();localStorage.removeItem(DRAFT);$('draft').value='';$('draftStatus').textContent='تم حفظ الحساب في الدفتر';toast('اتسجلت '+found.length+' عملية')};
-document.querySelectorAll('.chip').forEach(b=>b.onclick=()=>{$('draft').value+=($('draft').value?'، ':'')+b.dataset.text;$('draft').dispatchEvent(new Event('input'))});
 function toast(t){$('toast').textContent=t;$('toast').classList.add('show');setTimeout(()=>$('toast').classList.remove('show'),1800)}
 $('exportBtn').onclick=()=>{const blob=new Blob([JSON.stringify({app:'hesabaty',version:4,exported:new Date().toISOString(),items},null,1)],{type:'application/json'});const a=document.createElement('a');a.href=URL.createObjectURL(blob);a.download='hesabaty-backup-'+new Date().toISOString().slice(0,10)+'.json';document.body.append(a);a.click();a.remove();setTimeout(()=>URL.revokeObjectURL(a.href),1000);toast('تم تصدير النسخة الاحتياطية')};
 $('importBtn').onclick=()=>$('importFile').click();
